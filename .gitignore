@@ -1,0 +1,19 @@
+# In case you want to use it in other OS
+.DS_Store
+
+# Editor swapfiles
+.*.sw?
+*~
+# Vagrant
+/.vagrant
+
+# Terraform
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
