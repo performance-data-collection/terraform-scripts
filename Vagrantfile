@@ -69,5 +69,6 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
   config.vm.provision :shell, path: "utilities/bootstrap.sh"
+  config.vm.provision :shell, path: "utilities/emacs-configuration.sh", privileged: false
   config.vm.provision :shell, path: "utilities/install-terraform.sh", privileged: false
 end

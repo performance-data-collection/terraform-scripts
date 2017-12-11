@@ -3,62 +3,33 @@
 #         https://www.pelo.tech/blog/install-terraform-packer
 # Script prerequisite > install jq > https://stedolan.github.io
 
-cd ~
-
-# # Prerequisites
-# if [ "$(uname)" == "Darwin" ]; then
-#     brew install jq
-# # For Linux
-# elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-#     sudo apt-get install --assume-yes jq
-# fi
-
+# Prerequisites
+# sudo apt-get install --assume-yes jq
 echo "Get URLs for most recent versions from https://releases.hashicorp.com/index.json"
-# For OS-X
-if [ "$(uname)" == "Darwin" ]; then
-    terraform_url=$(curl -s  https://releases.hashicorp.com/index.json | jq '{terraform}' | egrep "darwin.*64" | sort --version-sort -r | head -1 | awk -F[\"] '{print $4}')
-    packer_url=$(curl -s  https://releases.hashicorp.com/index.json | jq '{packer}' | egrep "darwin.*64" | sort --version-sort -r | head -1 | awk -F[\"] '{print $4}')
-# For Linux
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    terraform_url=$(curl -s  https://releases.hashicorp.com/index.json | jq '{terraform}' | egrep "linux.*amd64" | sort --version-sort -r | head -1 | awk -F[\"] '{print $4}')
-    # packer_url=$(curl -s  https://releases.hashicorp.com/index.json | jq '{packer}' | egrep "linux.*amd64" | sort --version-sort -r | head -1 | awk -F[\"] '{print $4}')
+terraform_url=$(curl -s  https://releases.hashicorp.com/index.json | jq '{terraform}' | egrep "linux.*amd64" | sort --version-sort -r | head -1 | awk -F[\"] '{print $4}')
+# Remove previous version
+rm -rvf ~/terraform-old
+if [ -d ~/terraform ]; then
+    echo "Moving previous directory ~/terraform to terraform-old"
+    mv -v ~/terraform ~/terraform-old
 fi
-
-# Create a move into directory.
-cd
-# mkdir packer
-mkdir -p terraform && cd $_
-
+# mkdir terraform
+mkdir -p ~/terraform
 # Download Terraform. URI: https://www.terraform.io/downloads.html
 echo "Downloading $terraform_url."
-curl -s -o terraform.zip $terraform_url
+curl -s -o ~/terraform/terraform.zip $terraform_url
 # Unzip and install
-unzip terraform.zip
-
-# Change directory to Packer
-# cd ~/packer
-
-# # Download Packer. URI: https://www.packer.io/downloads.html
-# echo "Downloading $packer_url."
-# curl -s  -o packer.zip $packer_url
-# # Unzip and install
-# unzip packer.zip
-
-if [ "$(uname)" == "Darwin" ]; then
-  echo '
-  # Terraform & Packer Paths.
-  export PATH=~/terraform/:~/packer/:$PATH
-  ' >>~/.bash_profile
-
-  source ~/.bash_profile
-# For Linux
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-  echo '
-# Terraform & Packer Paths.
-# export PATH=~/terraform/:~/packer/:$PATH
+unzip ~/terraform/terraform.zip -d ~/terraform/
+# Delete previous version if present
+rm -rvf ~/terraform-old
+# If terraform path is not configured
+if ! grep -s -H '~/terraform' ~/.bashrc; then
+    echo "Adding terraform binary path to ~/.bashrc"
+    echo '
+# Terraform Path.
 export PATH=~/terraform/:$PATH
-  ' >>~/.bashrc
-
-  # source ~/.bashrc
+' >>~/.bashrc
+else
+    echo "The Terraform path is already present in the .bashrc file."
 fi
 ~/terraform/terraform version
