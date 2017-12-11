@@ -14,6 +14,8 @@ if ! grep -s -H 'terraform-mode' ~/.emacs; then
 (add-to-list '"'"'load-path "~/.emacs.d/lisp")
 ;;; Load terraform library
 (load-library "terraform-mode")
+;;; Disable backup files
+(setq make-backup-files nil)
 ' >>~/.emacs
 else
     echo "The terraform-mode configuration is already present in the .emacs file."
