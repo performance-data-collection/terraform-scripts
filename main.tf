@@ -1,7 +1,3 @@
-variable "amis" {
-  type = "map"
-}
-
 # US East (N. Virginia)
 provider "aws" {
   version = "~> 1.5"
@@ -21,7 +17,7 @@ provider "aws" {
 # South America (Sao Paulo)
 provider "aws" {
   version = "~> 1.5"
-  shared_credentials_file = "/vagrant/credentials"
+  shared_credentials_file = "${var.credentials_file}"
   region = "sa-east-1"
   alias = "brasil"
 }
