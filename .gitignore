@@ -30,3 +30,5 @@ credentials
 auto-save-list
 tramp
 .\#*
+default.pem
+default.pem.pub
