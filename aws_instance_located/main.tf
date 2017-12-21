@@ -13,6 +13,23 @@ resource "aws_instance" "gnu_linux" {
   instance_type = "${var.instance_type}"
   key_name = "${var.key_name}"
   security_groups = ["${aws_security_group.allow_all_output.name}", "${aws_security_group.allow_ssh.name}"]
+
+  connection {
+    user = "admin"
+    private_key = "${file("${var.priv_key_file_path}")}"
+  }
+
+  provisioner "local-exec" {
+    command = "chmod 0600 '${var.priv_key_file_path}'"
+  }
+
+  provisioner "remote-exec" {
+    script = "utilities/wait-until-boot-finished.sh"
+  }
+
+  provisioner "local-exec" {
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u admin --private-key '${var.priv_key_file_path}' -i '${self.public_ip},' ./ansible/master.yml"
+  }
 }
 
 resource "aws_security_group" "allow_ssh" {

@@ -1,0 +1,83 @@
+  - hosts: all
+    become: false
+
+    tasks:
+      - name: install prerequisites for docker repository
+        become: true
+        apt: name={{item}} state=latest
+        with_items:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg2
+          - software-properties-common
+          - python-cached-property
+          - python-docker
+          - python-dockerpty
+          - python-docopt
+          - python-jsonschema
+          - python-requests
+          - python-texttable
+          - python-websocket
+          - python-yaml
+
+      - name: get the distribution name for the repository
+        shell: . /etc/os-release; echo "$ID"
+        register: distribution_id
+
+      - name: get the version code name for the repository
+        shell: lsb_release -cs
+        register: version_code_name
+
+      - name: ensure the docker apt repository key is installed
+        apt_key: url="https://download.docker.com/linux/{{ distribution_id.stdout }}/gpg" state=present
+        become: true
+
+      - name: ensure the repository is configured
+        apt_repository: repo='deb  [arch=amd64] https://download.docker.com/linux/{{ distribution_id.stdout }} {{ version_code_name.stdout }} stable' state=present
+        become: true
+
+      - name: ensure docker-ce is installed
+        apt: name=docker-ce update_cache=yes
+        become: true
+
+      - name: add current user to the docker group
+        become: true
+        user: name="{{ ansible_user }}" groups=docker append=yes
+
+      - name: Install docker-compose
+        become: true
+        get_url:
+          url: https://github.com/docker/compose/releases/download/1.18.0/docker-compose-Linux-x86_64
+          dest: /usr/local/bin/docker-compose
+          force: yes
+
+      - name: Set permissions on docker-compose binary
+        become: true
+        file:
+          path: /usr/local/bin/docker-compose
+          mode: 0755
+
+      - name: Copy docker compose file
+        become: false
+        copy:
+          src: docker-data
+          dest: "{{ ansible_env.HOME }}"
+          mode: 0644
+
+      - name: Starting docker container
+        become: false
+        docker_service:
+          project_name: app
+          project_src: "{{ ansible_env.HOME }}/docker-data"
+          files: docker-compose.yaml
+          state: present
+          stopped: no
+        register: output
+
+      - debug:
+          var: output
+
+      - assert:
+          that:
+            - "main_container.app_main_container_1.state.running"

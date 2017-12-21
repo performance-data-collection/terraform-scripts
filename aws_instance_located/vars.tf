@@ -17,8 +17,14 @@ variable "key_name" {
 
 variable "key_file_path" {
   type = "string"
-  description = "The path public key file to use for ssh access."
+  description = "The path to the public key file to use for ssh access."
   default = "default.pem.pub"
+}
+
+variable "priv_key_file_path" {
+  type = "string"
+  description = "The path to the private key file to use for ssh access."
+  default = "default.pem"
 }
 
 variable "inbound_cidr_blocks" {
