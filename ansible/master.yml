@@ -45,6 +45,11 @@
         become: true
         user: name="{{ ansible_user }}" groups=docker append=yes
 
+      - name: reset ssh connection to allow user changes to affect 'current login user'
+        shell: sleep 1; pkill -u {{ ansible_ssh_user }} sshd
+        async: 3
+        poll: 2
+
       - name: Install docker-compose
         become: true
         get_url:
@@ -59,14 +64,12 @@
           mode: 0755
 
       - name: Copy docker compose file
-        become: false
         copy:
           src: docker-data
           dest: "{{ ansible_env.HOME }}"
           mode: 0644
 
       - name: Starting docker container
-        become: false
         docker_service:
           project_name: app
           project_src: "{{ ansible_env.HOME }}/docker-data"
