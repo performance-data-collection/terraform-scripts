@@ -13,6 +13,7 @@
           - software-properties-common
           - python-cached-property
           - python-docker
+          - docker-compose
           - python-dockerpty
           - python-docopt
           - python-jsonschema
