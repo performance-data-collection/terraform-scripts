@@ -1,9 +1,9 @@
 variable "amis" {
   type = "map"
   default = {
-    "virginia" = "ami-55ef662f"
-    "europe" = "ami-bf2ba8d0"
-    "brasil" = "ami-286f2a44"
+    "virginia" = "ami-f6e6948c"
+    "europe" = "ami-351c965a"
+    "brasil" = "ami-a61c5dca"
     description = "This variable contains that will be used in each region (Virginia, Frankfurt, and Sao Paulo)."
   }
 }

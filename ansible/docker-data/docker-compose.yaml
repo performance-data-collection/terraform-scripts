@@ -1,0 +1,4 @@
+version: '2'
+services:
+    main_container:
+      image: "redis:alpine"

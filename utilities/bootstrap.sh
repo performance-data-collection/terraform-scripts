@@ -11,4 +11,4 @@ rm -fv /etc/apt/apt.conf.d/70debconf
 rm -fv /etc/apt/apt.conf.d/20listchanges
 apt-get update
 # Less verbose output: https://askubuntu.com/questions/258219/how-do-i-make-apt-get-install-less-noisy
-apt-get install -q -o=Dpkg::Use-Pty=0 --assume-yes curl unzip jq emacs-nox
+apt-get install -q -o=Dpkg::Use-Pty=0 --assume-yes curl unzip jq emacs-nox ansible s-el elpa-f yaml-mode
